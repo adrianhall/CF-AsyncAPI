@@ -41,4 +41,11 @@ app.all("*", async (c) => {
   return c.env.ASSETS.fetch(c.req.raw);
 });
 
-export default app;
+export default {
+  fetch: app.fetch,
+  // Stub queue handler satisfies the wrangler.jsonc consumer config so
+  // the vitest pool-workers runtime doesn't throw.  Phase 5 replaces
+  // this with the real implementation.
+  /* istanbul ignore next -- @preserve */
+  async queue() {}
+} satisfies ExportedHandler<Env>;
