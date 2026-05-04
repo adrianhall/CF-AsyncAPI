@@ -9,6 +9,9 @@
  */
 
 import { useEffect, useState } from "react";
+import JobList from "./JobList";
+import UploadForm from "./UploadForm";
+import { useJobPolling } from "./useJobPolling";
 
 /** Shape returned by `GET /api/version`. */
 interface ApiInfo {
@@ -27,6 +30,7 @@ function App() {
   const [info, setInfo] = useState<ApiInfo | null>(null);
   const [user, setUser] = useState<UserInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const polling = useJobPolling();
 
   useEffect(() => {
     fetch("/api/version")
@@ -69,6 +73,10 @@ function App() {
           Connected to {info.name} v{info.version}
         </p>
       )}
+
+      {user && <UploadForm onUploaded={polling.refresh} />}
+
+      <JobList jobs={polling.jobs} loading={polling.loading} error={polling.error} />
     </div>
   );
 }

@@ -1,0 +1,1 @@
+export { toGrayscale } from "./grayscale";

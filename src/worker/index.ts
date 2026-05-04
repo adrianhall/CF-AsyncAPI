@@ -17,6 +17,7 @@ import {
   type AuthVariables
 } from "@lib/cloudflare-auth";
 import { createLogger } from "@lib/cloudflare-logging";
+import { handleQueue, type JobMessage } from "./queue-handler";
 
 /** Root Hono application bound to the Worker `Env`. */
 const app = new Hono<{ Bindings: Env; Variables: AuthVariables }>();
@@ -43,9 +44,5 @@ app.all("*", async (c) => {
 
 export default {
   fetch: app.fetch,
-  // Stub queue handler satisfies the wrangler.jsonc consumer config so
-  // the vitest pool-workers runtime doesn't throw.  Phase 5 replaces
-  // this with the real implementation.
-  /* istanbul ignore next -- @preserve */
-  async queue() {}
-} satisfies ExportedHandler<Env>;
+  queue: handleQueue
+} satisfies ExportedHandler<Env, JobMessage>;

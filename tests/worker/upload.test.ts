@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import { SELF, env } from "cloudflare:test";
-import { PNG } from "pngjs";
+import { encode } from "fast-png";
 import { signDevJwt, JWT_HEADER } from "@lib/cloudflare-auth";
 import migrationSql from "../../migrations/0001_create_jobs.sql?raw";
 
@@ -23,13 +23,8 @@ function toBuffer(arr: Uint8Array): ArrayBuffer {
 
 /** Build a minimal 1x1 red PNG as a Uint8Array. */
 function makeTestPng(): Uint8Array {
-  const png = new PNG({ width: 1, height: 1 });
-  // Red pixel, fully opaque
-  png.data[0] = 255; // R
-  png.data[1] = 0; // G
-  png.data[2] = 0; // B
-  png.data[3] = 255; // A
-  return new Uint8Array(PNG.sync.write(png));
+  const data = new Uint8Array([255, 0, 0, 255]); // RGBA red pixel
+  return encode({ width: 1, height: 1, data, channels: 4, depth: 8 });
 }
 
 /** Send an authenticated request via SELF. */

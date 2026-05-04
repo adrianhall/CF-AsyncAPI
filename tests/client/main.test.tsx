@@ -1,12 +1,33 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { waitFor } from "@testing-library/react";
 
+/** Build a JSON response. */
+function jsonResponse(body: unknown): Response {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
 beforeEach(() => {
-  vi.spyOn(globalThis, "fetch").mockResolvedValue(
-    new Response(JSON.stringify({ name: "AsyncAPI", version: "0.0.1" }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" }
-    })
+  vi.spyOn(globalThis, "fetch").mockImplementation(
+    (input: string | URL | Request) => {
+      const url =
+        typeof input === "string"
+          ? input
+          : input instanceof URL
+            ? input.href
+            : input.url;
+      if (url.includes("/api/me"))
+        return Promise.resolve(
+          jsonResponse({ email: "test@example.com", id: "u1" }),
+        );
+      if (url.includes("/api/jobs"))
+        return Promise.resolve(jsonResponse({ jobs: [] }));
+      return Promise.resolve(
+        jsonResponse({ name: "AsyncAPI", version: "0.0.1" }),
+      );
+    },
   );
 });
 

@@ -20,7 +20,6 @@ body {
   color: var(--fg);
   min-height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
 }
 
@@ -75,4 +74,127 @@ p {
 
 .loading {
   opacity: 0.6;
+}
+
+/* Upload form */
+
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+}
+
+.upload-form input[type="file"] {
+  font-family: inherit;
+  font-size: 0.85rem;
+  color: var(--fg);
+}
+
+.upload-form button {
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--highlight);
+  color: var(--bg);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.upload-form button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.upload-error {
+  color: var(--error);
+  font-size: 0.85rem;
+}
+
+/* Job list */
+
+.empty {
+  margin-top: 1.5rem;
+  opacity: 0.6;
+}
+
+.job-list {
+  list-style: none;
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.job-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.job-name {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.job-time {
+  font-size: 0.75rem;
+  opacity: 0.5;
+  width: 100%;
+}
+
+.job-error {
+  width: 100%;
+  color: var(--error);
+  font-size: 0.8rem;
+}
+
+/* Status badges */
+
+.badge {
+  flex-shrink: 0;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge--pending {
+  background-color: #f0ad4e;
+  color: #000;
+}
+
+.badge--in-progress {
+  background-color: #5bc0de;
+  color: #000;
+}
+
+.badge--completed {
+  background-color: var(--highlight);
+  color: var(--bg);
+}
+
+.badge--failed {
+  background-color: var(--error);
+  color: #fff;
 }
