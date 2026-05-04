@@ -1,7 +1,7 @@
 {
-    "name": "serverless_mud",
+    "name": "async_api",
     "version": "0.0.1",
-    "description": "A simple MUD game built on Cloudflare Workers",
+    "description": "A simple Async API demo built on Cloudflare Workers",
     "license": "MIT",
     "packageManager": "pnpm@10.33.2",
     "private": true,

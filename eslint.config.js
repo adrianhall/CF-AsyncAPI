@@ -1,7 +1,7 @@
 /**
- * ESLint configuration for the ServerlessMud project. This file defines linting 
- * rules and settings for different parts of the codebase, including global ignores, 
- * base TypeScript files, React client files, Worker files, and configuration files 
+ * ESLint configuration for the AsyncAPI project. This file defines linting
+ * rules and settings for different parts of the codebase, including global ignores,
+ * base TypeScript files, React client files, Worker files, and configuration files
  * at the repo root.
  */
 import js from "@eslint/js";

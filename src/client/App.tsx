@@ -1,26 +1,19 @@
 /**
- * Root React component for ServerlessMud.
+ * Root React component for AsyncAPI.
  *
- * Fetches basic metadata from `/api/version` (public) and health
- * status from `/api/health` (authenticated) on mount and renders a
- * landing page showing the results.
+ * Fetches basic metadata from `/api/version` (public) and user info
+ * from `/api/me` (authenticated) on mount and renders a landing page
+ * showing the results.
  *
  * @module
  */
 
 import { useEffect, useState } from "react";
-import GameDisplay from "./GameDisplay";
 
 /** Shape returned by `GET /api/version`. */
 interface ApiInfo {
   name: string;
   version: string;
-}
-
-/** Shape returned by `GET /api/health`. */
-interface HealthInfo {
-  status: string;
-  timestamp: string;
 }
 
 /** Shape returned by `GET /api/me`. */
@@ -32,10 +25,8 @@ interface UserInfo {
 /** Root application component. */
 function App() {
   const [info, setInfo] = useState<ApiInfo | null>(null);
-  const [health, setHealth] = useState<HealthInfo | null>(null);
   const [user, setUser] = useState<UserInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [gameActive, setGameActive] = useState(false);
 
   useEffect(() => {
     fetch("/api/version")
@@ -44,16 +35,6 @@ function App() {
         return res.json() as Promise<ApiInfo>;
       })
       .then(setInfo)
-      .catch((err: unknown) => {
-        setError(err instanceof Error ? err.message : "Unknown error");
-      });
-
-    fetch("/api/health")
-      .then((res) => {
-        if (!res.ok) throw new Error(`Health API responded with ${res.status}`);
-        return res.json() as Promise<HealthInfo>;
-      })
-      .then(setHealth)
       .catch((err: unknown) => {
         setError(err instanceof Error ? err.message : "Unknown error");
       });
@@ -69,23 +50,6 @@ function App() {
       });
   }, []);
 
-  if (gameActive) {
-    return (
-      <>
-        {user && (
-          <div className="user-badge">
-            <span className="user-email">{user.email}</span>
-            <span className="user-id">{user.id}</span>
-          </div>
-        )}
-        <GameDisplay userEmail={user?.email ?? ""} />
-        <button className="leave-game-btn" type="button" onClick={() => setGameActive(false)}>
-          Leave Game
-        </button>
-      </>
-    );
-  }
-
   return (
     <div className="app">
       {user && (
@@ -95,8 +59,8 @@ function App() {
         </div>
       )}
 
-      <h1>ServerlessMud</h1>
-      <p>A MUD game built on Cloudflare Workers</p>
+      <h1>AsyncAPI</h1>
+      <p>A simple Async API demo built on Cloudflare Workers</p>
 
       {error && <p className="error">API error: {error}</p>}
 
@@ -104,20 +68,6 @@ function App() {
         <p className="api-info">
           Connected to {info.name} v{info.version}
         </p>
-      )}
-
-      {health && (
-        <p className="health-info">
-          Health: {health.status} (checked {health.timestamp})
-        </p>
-      )}
-
-      {!info && !error && <p className="loading">Connecting...</p>}
-
-      {user && (
-        <button className="start-game-btn" type="button" onClick={() => setGameActive(true)}>
-          Start Game
-        </button>
       )}
     </div>
   );
