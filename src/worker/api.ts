@@ -10,7 +10,7 @@
 import { Hono } from "hono";
 import type { AuthVariables } from "@lib/cloudflare-auth";
 import { createLogger } from "@lib/cloudflare-logging";
-import { createJob, getJob, getJobsByUser, toPublicJob } from "@lib/jobs";
+import { type Job, createJob, getJob, getJobsByUser, toPublicJob } from "@lib/jobs";
 
 const log = createLogger("api.upload");
 
@@ -66,6 +66,52 @@ api.get("/jobs/:jobId", async (c) => {
   }
 
   return c.json({ job: toPublicJob(job) });
+});
+
+/**
+ * Derive a download filename from the original upload name.
+ *
+ * Strips the `.png` extension (case-insensitive), appends `-grayscale.png`,
+ * and sanitises double-quotes for safe use in a `Content-Disposition` header.
+ */
+function suggestedName(job: Job): string {
+  const base = job.originalName.replace(/\.png$/i, "");
+  return `${base}-grayscale.png`.replace(/"/g, "_");
+}
+
+/**
+ * GET /api/jobs/:jobId/download
+ *
+ * Streams the processed (grayscale) image for a completed job.
+ * Ownership check returns 404 (leak-safe). Non-completed jobs get 409.
+ */
+api.get("/jobs/:jobId/download", async (c) => {
+  const job = await getJob(c.env.DB, c.req.param("jobId"));
+
+  if (!job || job.userEmail !== c.get("userEmail")) {
+    return c.json({ error: "Job not found" }, 404);
+  }
+
+  if (job.state !== "completed") {
+    return c.json({ error: "Job not completed" }, 409);
+  }
+
+  if (!job.processedKey) {
+    return c.json({ error: "Processed image missing" }, 500);
+  }
+
+  const object = await c.env.IMAGES_BUCKET.get(job.processedKey);
+  if (!object) {
+    return c.json({ error: "Processed image missing" }, 404);
+  }
+
+  return new Response(object.body, {
+    headers: {
+      "Content-Type": "image/png",
+      "Content-Disposition": `attachment; filename="${suggestedName(job)}"`,
+      "Content-Length": String(object.size)
+    }
+  });
 });
 
 /**

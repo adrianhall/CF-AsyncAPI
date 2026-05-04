@@ -94,6 +94,28 @@ describe("JobList", () => {
     ).toBeNull();
   });
 
+  it("renders a download link for completed jobs with the correct href", () => {
+    const job = makeJob({ id: "dl-1", state: "completed" });
+    render(<JobList jobs={[job]} loading={false} error={null} />);
+
+    const link = screen.getByText("Download");
+    expect(link).toBeInTheDocument();
+    expect(link.tagName).toBe("A");
+    expect(link).toHaveAttribute("href", "/api/jobs/dl-1/download");
+    expect(link).toHaveAttribute("download");
+  });
+
+  it("does not render a download link for non-completed jobs", () => {
+    const jobs = [
+      makeJob({ id: "p1", state: "pending" }),
+      makeJob({ id: "p2", state: "in_progress" }),
+      makeJob({ id: "p3", state: "failed", error: "oops" }),
+    ];
+    render(<JobList jobs={jobs} loading={false} error={null} />);
+
+    expect(screen.queryByText("Download")).not.toBeInTheDocument();
+  });
+
   it("shows jobs over loading state when jobs are already present", () => {
     const jobs = [makeJob({ originalName: "existing.png" })];
     render(<JobList jobs={jobs} loading={true} error={null} />);

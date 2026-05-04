@@ -57,6 +57,11 @@ function JobList({ jobs, loading, error }: JobListProps) {
           <span className={`badge badge--${badgeClass(job.state)}`}>{stateLabel(job.state)}</span>
           <span className="job-time">{job.createdAt}</span>
           {job.state === "failed" && job.error && <span className="job-error">{job.error}</span>}
+          {job.state === "completed" && (
+            <a className="download" href={`/api/jobs/${job.id}/download`} download>
+              Download
+            </a>
+          )}
         </li>
       ))}
     </ul>

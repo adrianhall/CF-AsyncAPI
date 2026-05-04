@@ -198,3 +198,17 @@ p {
   background-color: var(--error);
   color: #fff;
 }
+
+/* Download link */
+
+.download {
+  flex-shrink: 0;
+  color: var(--highlight);
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.download:hover {
+  text-decoration: underline;
+}
