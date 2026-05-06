@@ -18,6 +18,13 @@
     }
   ],
 
+  "kv_namespaces": [
+    {
+      "binding": "SESSIONS",
+      "id": "REPLACE_WITH_REAL_ID_AFTER_CREATE"
+    }
+  ],
+
   "d1_databases": [
     {
       "binding": "DB",

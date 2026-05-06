@@ -11,6 +11,7 @@ import { Hono } from "hono";
 import type { AuthVariables } from "@lib/cloudflare-auth";
 import { createLogger } from "@lib/cloudflare-logging";
 import { type Job, createJob, getJob, getJobsByUser, toPublicJob } from "@lib/jobs";
+import { sessionTracker } from "./session-tracker";
 
 const log = createLogger("api.upload");
 
@@ -22,6 +23,9 @@ const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 
 /** Sub-router mounted at `/api`. */
 const api = new Hono<{ Bindings: Env; Variables: AuthVariables }>();
+
+/** Track the last authenticated API action per user in KV. */
+api.use(sessionTracker);
 
 /**
  * GET /api/version
